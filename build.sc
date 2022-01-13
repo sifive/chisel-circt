@@ -8,7 +8,7 @@ import mill.scalalib.scalafmt._
 object v {
   val scala = "2.12.12"
   val chiselCirct = "0.1"
-  val chisel3 = ivy"edu.berkeley.cs::chisel3:3.4.3"
+  val chisel3 = ivy"edu.berkeley.cs::chisel3:3.5.0"
   val scalatest = ivy"org.scalatest::scalatest:3.2.7"
 }
 
