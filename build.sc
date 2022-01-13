@@ -6,15 +6,14 @@ import mill.scalalib.publish._
 import mill.scalalib.scalafmt._
 
 object v {
-  val scala = "2.12.12"
   val chiselCirct = "0.1"
   val chisel3 = ivy"edu.berkeley.cs::chisel3:3.5.0"
   val scalatest = ivy"org.scalatest::scalatest:3.2.7"
 }
 
-object chiselCirct extends chiselCirct
+object chiselCirct extends mill.Cross[chiselCirctCrossModule]("2.12.12")
 
-class chiselCirct extends SbtModule with ScalafmtModule with PublishModule { m =>
+class chiselCirctCrossModule(val crossScalaVersion: String) extends CrossSbtModule with ScalafmtModule with PublishModule { m =>
   override def repositoriesTask = T.task {
     super.repositoriesTask() ++ Seq(
       MavenRepository("https://oss.sonatype.org/content/repositories/snapshots")
@@ -22,8 +21,6 @@ class chiselCirct extends SbtModule with ScalafmtModule with PublishModule { m =
   }
   
   override def millSourcePath = super.millSourcePath / os.up
-
-  def scalaVersion = v.scala
 
   def publishVersion = v.chiselCirct
 
