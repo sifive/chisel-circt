@@ -148,8 +148,20 @@ class CIRCT extends Phase {
 
     try {
       logger.info(s"""Running CIRCT: '${cmd.mkString(" ")} < $$input'""")
-      val result = (cmd #< new java.io.ByteArrayInputStream(input.getBytes)).!!
-
+      val stdoutStream = new java.io.ByteArrayOutputStream
+      val stderrStream = new java.io.ByteArrayOutputStream
+      val stdoutWriter = new java.io.PrintWriter(stdoutStream)
+      val stderrWriter = new java.io.PrintWriter(stderrStream)
+      val exitValue = (cmd #< new java.io.ByteArrayInputStream(input.getBytes)).!(ProcessLogger(stdoutWriter.println, stderrWriter.println))
+      stdoutWriter.close()
+      stderrWriter.close()
+      val result = stdoutStream.toString
+      val errors = stderrStream.toString
+      if (exitValue != 0) {
+        //logger.error(errors)
+        StageUtils.dramaticError(s"${binary} failed.\nExitCode:\n${exitValue}\nSTDOUT:\n${result}\nSTDERR:\n${errors}")
+        throw new StageError()
+      }
       circtOptions.target match {
         case Some(CIRCTTarget.FIRRTL) =>
           Seq(EmittedMLIR(outputFileName, result, Some(".fir.mlir")))
@@ -168,7 +180,6 @@ class CIRCT extends Phase {
         StageUtils.dramaticError(s"Binary '$binary' was not found on the $$PATH. (Do you have CIRCT installed?)")
         throw new StageError(cause = a)
     }
-
   }
 
 }
