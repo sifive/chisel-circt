@@ -125,9 +125,9 @@ class CIRCT extends Phase {
         ((circtOptions.target, split) match {
           case (Some(CIRCTTarget.FIRRTL), false)        => Seq("-ir-fir")
           case (Some(CIRCTTarget.HW), false)            => Seq("-ir-hw")
-          case (Some(CIRCTTarget.Verilog), true)        => Seq("--split-verilog")
+          case (Some(CIRCTTarget.Verilog), true)        => Seq("--split-verilog", s"-o=${stageOptions.targetDir}")
           case (Some(CIRCTTarget.Verilog), false)       => None
-          case (Some(CIRCTTarget.SystemVerilog), true)  => Seq("--split-verilog")
+          case (Some(CIRCTTarget.SystemVerilog), true)  => Seq("--split-verilog", s"-o=${stageOptions.targetDir}")
           case (Some(CIRCTTarget.SystemVerilog), false) => None
           case (None, _)                                =>
             throw new Exception(
@@ -141,6 +141,7 @@ class CIRCT extends Phase {
 
     try {
       logger.info(s"""Running CIRCT: '${cmd.mkString(" ")} < $$input'""")
+      println(s"""Running CIRCT: '${cmd.mkString(" ")} < $$input'""")
       val stdoutStream = new java.io.ByteArrayOutputStream
       val stderrStream = new java.io.ByteArrayOutputStream
       val stdoutWriter = new java.io.PrintWriter(stdoutStream)
