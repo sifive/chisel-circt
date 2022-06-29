@@ -29,17 +29,12 @@ class Checks extends Phase {
   override def invalidates(a: Phase) = false
 
   override def transform(annotations: AnnotationSeq): AnnotationSeq = {
-    val outputFile, target, handover = collection.mutable.ArrayBuffer[Annotation]()
+    val target, handover = collection.mutable.ArrayBuffer[Annotation]()
 
     annotations.foreach {
-      case a: OutputFileAnnotation => outputFile += a
       case a: CIRCTTargetAnnotation => target += a
       case a: CIRCTHandover => handover += a
       case _ =>
-    }
-
-    if (outputFile.size != 1) {
-      throw new OptionsException("An output file must be specified")
     }
 
     if (target.size != 1) {
