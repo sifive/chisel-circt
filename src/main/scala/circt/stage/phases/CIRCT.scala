@@ -147,6 +147,10 @@ class CIRCT extends Phase {
             throw new Exception(
               "No 'circtOptions.target' specified. This should be impossible if dependencies are satisfied!"
             )
+          case (_, true) =>
+            throw new Exception(
+              s"The circtOptions.target specified (${circtOptions.target}) does not support running with an EmitAllModulesAnnotation as CIRCT only supports one-file-per-module for Verilog or SystemVerilog targets."
+            )
           case _ =>
             throw new Exception(
               s"Invalid combination of circtOptions.target ${circtOptions.target} and split ${split}"
