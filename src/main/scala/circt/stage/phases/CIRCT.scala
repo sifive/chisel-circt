@@ -155,8 +155,7 @@ class CIRCT extends Phase {
     try {
       logger.info(s"""Running CIRCT: '${cmd.mkString(" ")} < $$input'""")
       println(s"""Running CIRCT: '${cmd.mkString(" ")} < $$input'""")
-      val stdoutStream = new java.io.ByteArrayOutputStream
-      val stderrStream = new java.io.ByteArrayOutputStream
+      val stdoutStream, stderrStream = new java.io.ByteArrayOutputStream
       val stdoutWriter = new java.io.PrintWriter(stdoutStream)
       val stderrWriter = new java.io.PrintWriter(stderrStream)
       val exitValue = (cmd #< new java.io.ByteArrayInputStream(input.getBytes))
