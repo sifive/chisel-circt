@@ -2,22 +2,11 @@
 
 package circt.stage.phases
 
-import circt.stage.{
-  CIRCTHandover,
-  CIRCTTargetAnnotation
-}
+import circt.stage.{CIRCTHandover, CIRCTTargetAnnotation}
 
-import firrtl.{
-  AnnotationSeq,
-  Emitter,
-  SystemVerilogEmitter
-}
+import firrtl.{AnnotationSeq, Emitter, SystemVerilogEmitter}
 import firrtl.annotations.Annotation
-import firrtl.options.{
-  Dependency,
-  OptionsException,
-  Phase
-}
+import firrtl.options.{Dependency, OptionsException, Phase}
 import firrtl.stage.OutputFileAnnotation
 
 /** Check properties of an [[AnnotationSeq]] to look for errors before running CIRCT. */
@@ -32,8 +21,9 @@ class Checks extends Phase {
     val target, handover = collection.mutable.ArrayBuffer[Annotation]()
 
     annotations.foreach {
+      case a: OutputFileAnnotation  => outputFile += a
       case a: CIRCTTargetAnnotation => target += a
-      case a: CIRCTHandover => handover += a
+      case a: CIRCTHandover         => handover += a
       case _ =>
     }
 
