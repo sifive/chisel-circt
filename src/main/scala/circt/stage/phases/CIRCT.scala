@@ -63,7 +63,6 @@ class CIRCT extends Phase {
     var blackbox, inferReadWrite = false
     var dedup, imcp = true
     var logLevel = _root_.logger.LogLevel.None
-
     var split = false
 
     val annotationsx: AnnotationSeq = annotations.flatMap {
