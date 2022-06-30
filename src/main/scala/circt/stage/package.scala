@@ -23,6 +23,7 @@ package object stage {
         .foldLeft(new CIRCTOptions()) { (acc, c) =>
           c match {
             case FirrtlFileAnnotation(a)  => acc.copy(inputFile = Some(new File(a)))
+            case OutputFileAnnotation(a)  => acc.copy(outputFile = Some(new File(a)))
             case CIRCTTargetAnnotation(a) => acc.copy(target = Some(a))
             case PreserveAggregate        => acc.copy(preserveAggregate = true)
             case CIRCTHandover(a)         => acc.copy(handover = Some(a))

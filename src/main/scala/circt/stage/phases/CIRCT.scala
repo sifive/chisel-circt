@@ -197,6 +197,7 @@ class CIRCT extends Phase {
         StageUtils.dramaticError(s"Binary '$binary' was not found on the $$PATH. (Do you have CIRCT installed?)")
         throw new StageError(cause = a)
     }
+
   }
 
 }
