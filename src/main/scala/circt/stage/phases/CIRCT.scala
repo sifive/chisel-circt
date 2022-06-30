@@ -14,6 +14,8 @@ import _root_.logger.LogLevel
 
 import scala.sys.process._
 
+import java.io.File
+
 private object Helpers {
   implicit class LogLevelHelpers(logLevel: LogLevel.Value) {
     def toCIRCTOptions: Seq[String] = logLevel match {
@@ -55,43 +57,46 @@ class CIRCT extends Phase {
 
     var split = false
 
-    val annotationsx = annotations.filter {
-      case _: CustomFileEmission                             => false
-      case _: firrtl.EmitCircuitAnnotation                   => false
+    val annotationsx: AnnotationSeq = annotations.flatMap {
+      case a: CustomFileEmission                             => {
+        val filename = a.filename(annotations)
+        a.replacements(filename)
+      }
+      case _: firrtl.EmitCircuitAnnotation                   => Nil
       case _: firrtl.EmitAllModulesAnnotation                => {
         split = true
-        false
+        Nil
       }
       case RunFirrtlTransformAnnotation(transform)           =>
         transform match {
           /* Inlining/Flattening happen by default, so these can be dropped. */
-          case _: firrtl.passes.InlineInstances | _: firrtl.transforms.Flatten => false
+          case _: firrtl.passes.InlineInstances | _: firrtl.transforms.Flatten => Nil
           /* ReplSeqMem is converted to a firtool option */
           case _: firrtl.passes.memlib.ReplSeqMem                              =>
             blackbox = true
-            false
+            Nil
           /* Any emitters should not be passed to firtool. */
-          case _: firrtl.Emitter                                               => false
+          case _: firrtl.Emitter                                               => Nil
           /* Default case: leave the annotation around and let firtool warn about it. */
-          case _                                                               => true
+          case _                                                               => Nil
         }
       case firrtl.passes.memlib.InferReadWriteAnnotation     =>
         inferReadWrite = true
-        false
+        Nil
       case _: firrtl.transforms.NoDedupAnnotation            =>
         dedup = false
-        false
+        Nil
       case firrtl.transforms.NoConstantPropagationAnnotation =>
         imcp = false
-        false
+        Nil
       case anno: _root_.logger.LogLevelAnnotation            =>
-        logLevel = anno.globalLogLevel
-        false
+        logLevel = anno.globalLogLevel 
+        Nil
       /* The following can be dropped. */
-      case _: firrtl.transforms.CombinationalPath            => false
-      case _: _root_.logger.ClassLogLevelAnnotation          => false
+      case _: firrtl.transforms.CombinationalPath            => Nil
+      case _: _root_.logger.ClassLogLevelAnnotation          => Nil
       /* Default case: leave the annotation around and let firtool warn about it. */
-      case _                                                 => true
+      case a                                              => Seq(a)
     }
 
     /* Filter the annotations to only those things which CIRCT should see. */
