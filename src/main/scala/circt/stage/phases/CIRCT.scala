@@ -168,7 +168,6 @@ class CIRCT extends Phase {
       logger.info(result)
       val errors = stderrStream.toString
       if (exitValue != 0) {
-        //logger.error(errors)
         StageUtils.dramaticError(s"${binary} failed.\nExitCode:\n${exitValue}\nSTDOUT:\n${result}\nSTDERR:\n${errors}")
         throw new StageError()
       }
