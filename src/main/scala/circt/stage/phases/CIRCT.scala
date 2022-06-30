@@ -63,7 +63,6 @@ class CIRCT extends Phase {
     var blackbox, inferReadWrite = false
     var dedup, imcp = true
     var logLevel = _root_.logger.LogLevel.None
-
     var split = false
 
     val annotationsx: AnnotationSeq = annotations.flatMap {
@@ -160,8 +159,7 @@ class CIRCT extends Phase {
     try {
       logger.info(s"""Running CIRCT: '${cmd.mkString(" ")} < $$input'""")
       println(s"""Running CIRCT: '${cmd.mkString(" ")} < $$input'""")
-      val stdoutStream = new java.io.ByteArrayOutputStream
-      val stderrStream = new java.io.ByteArrayOutputStream
+      val stdoutStream, stderrStream = new java.io.ByteArrayOutputStream
       val stdoutWriter = new java.io.PrintWriter(stdoutStream)
       val stderrWriter = new java.io.PrintWriter(stderrStream)
       val exitValue = (cmd #< new java.io.ByteArrayInputStream(input.getBytes))
@@ -172,7 +170,6 @@ class CIRCT extends Phase {
       logger.info(result)
       val errors = stderrStream.toString
       if (exitValue != 0) {
-        //logger.error(errors)
         StageUtils.dramaticError(s"${binary} failed.\nExitCode:\n${exitValue}\nSTDOUT:\n${result}\nSTDERR:\n${errors}")
         throw new StageError()
       }
