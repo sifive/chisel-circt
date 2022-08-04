@@ -86,7 +86,7 @@ class CIRCT extends Phase {
           /* Any emitters should not be passed to firtool. */
           case _: firrtl.Emitter => Nil
           /* Default case: leave the annotation around and let firtool warn about it. */
-          case _ => Nil
+          case a => Seq(a)
         }
       case firrtl.passes.memlib.InferReadWriteAnnotation =>
         inferReadWrite = true
