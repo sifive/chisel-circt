@@ -1,3 +1,5 @@
+**This project has been upstreamed to [`chipsalliance/chisel3`](https://github.com/chipsalliance/chisel3) and is no longer developed in this repository.**
+
 # chisel-circt
 
 [![Maven Central](https://img.shields.io/maven-central/v/com.sifive/chisel-circt_2.13)](https://maven-badges.herokuapp.com/maven-central/com.sifive/chisel-circt_2.13)
