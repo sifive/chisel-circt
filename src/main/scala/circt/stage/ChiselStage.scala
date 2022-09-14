@@ -64,7 +64,36 @@ object ChiselStage {
       Dependency[circt.stage.phases.CIRCT]
     )
   )
+ 
+ /* A phase that assumes the circuit has already been elaborated and converted */
+   private def phaseFirrtlOnly = new PhaseManager(
+    Seq(
+      Dependency[chisel3.stage.phases.Convert],
+      Dependency[firrtl.stage.phases.AddImplicitOutputFile],  // ???
+      Dependency[chisel3.stage.phases.AddImplicitOutputAnnotationFile], // ???
+      Dependency[circt.stage.phases.Checks],
+      Dependency[circt.stage.phases.CIRCT]
+    )
+  )
+ 
+/** Compile an already elaborated Chisel circuit to SystemVerilog */
+  def emitSystemVerilog(circuit: Circuit /*? should this be chisel or post-firrtl?*/): String = phaseFirrtlOnly
+    .transform(
+      Seq(
+        ElaboratedCircuitAnnotationOrWhateverItsXCalled(circuit),
+       
+        CIRCTTargetAnnotation(CIRCTTarget.SystemVerilog),
+        CIRCTHandover(CIRCTHandover.CHIRRTL)
+      )
+    )
+    .collectFirst {
+      case EmittedVerilogCircuitAnnotation(a) => a
+    }
+    .get
+    .value
 
+ 
+ 
   /** Compile a Chisel circuit to FIRRTL dialect */
   def emitFIRRTLDialect(gen: => RawModule): String = phase
     .transform(
