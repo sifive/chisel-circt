@@ -49,6 +49,34 @@ object ChiselStageSpec {
   }
 }
 
+/** A fixture used that exercises features of the Trace API.
+  */
+class TraceSpec {
+
+  import chisel3._
+  import chisel3.experimental.Trace
+  import chisel3.util.experimental.InlineInstance
+
+  /** A mutable Chisel reference to an internal wire inside Bar. This is done to enable later use of the Trace API to find this wire. */
+  var id: Option[Bool] = None
+
+  /** A submodule that will be inlined into the parent, Foo. */
+  class Bar extends RawModule with InlineInstance {
+
+    /** The wire that we want to trace. */
+    val a = WireDefault(false.B)
+    id = Some(a)
+    dontTouch(a)
+    Trace.traceName(a)
+  }
+
+  /** The top module. */
+  class Foo extends RawModule {
+    val bar = Module(new Bar)
+  }
+
+}
+
 class ChiselStageSpec extends AnyFunSpec with Matchers {
 
   describe("ChiselStage") {
@@ -421,6 +449,71 @@ class ChiselStageSpec extends AnyFunSpec with Matchers {
 
       (verilog should not).include("module Baz")
       (verilog should not).include("module Bar")
+
+    }
+
+    it("should work with the Trace API for unified output") {
+
+      import chisel3.experimental.Trace
+
+      val fixture = new TraceSpec
+
+      val targetDir = new File("test_run_dir/TraceAPIUnified")
+
+      val args: Array[String] = Array(
+        "--target",
+        "systemverilog",
+        "--target-dir",
+        targetDir.toString
+      )
+
+      val annos = (new ChiselStage).execute(
+        args,
+        Seq(
+          ChiselGeneratorAnnotation(() => new fixture.Foo)
+        )
+      )
+
+      val finalTargets = Trace.finalTarget(annos)(fixture.id.get)
+      info("there is one final target")
+      finalTargets should have size (1)
+
+      val expectedTarget = firrtl.annotations.CircuitTarget("Foo").module("Foo").ref("bar_a")
+      info(s"the final target is $expectedTarget")
+      finalTargets.head should be(expectedTarget)
+
+    }
+
+    it("should work with the Trace API for split  verilog output") {
+
+      import chisel3.experimental.Trace
+
+      val fixture = new TraceSpec
+
+      val targetDir = new File("test_run_dir/TraceAPISplit")
+
+      val args: Array[String] = Array(
+        "--target",
+        "systemverilog",
+        "--target-dir",
+        targetDir.toString
+      )
+
+      val annos = (new ChiselStage).execute(
+        args,
+        Seq(
+          ChiselGeneratorAnnotation(() => new fixture.Foo),
+          firrtl.EmitAllModulesAnnotation(classOf[firrtl.SystemVerilogEmitter])
+        )
+      )
+
+      val finalTargets = Trace.finalTarget(annos)(fixture.id.get)
+      info("there is one final target")
+      finalTargets should have size (1)
+
+      val expectedTarget = firrtl.annotations.CircuitTarget("Foo").module("Foo").ref("bar_a")
+      info(s"the final target is $expectedTarget")
+      finalTargets.head should be(expectedTarget)
 
     }
 
