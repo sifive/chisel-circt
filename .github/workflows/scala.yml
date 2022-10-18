@@ -20,7 +20,7 @@ jobs:
       - name: Install CIRCT
         run: |
           mkdir usr
-          wget https://github.com/llvm/circt/releases/download/sifive%2F1%2F15%2F0/circt-bin-ubuntu-20.04.tar.gz -O - | tar -zx -C usr/
+          wget https://github.com/llvm/circt/releases/download/sifive%2F1%2F19%2F0/circt-bin-ubuntu-20.04.tar.gz -O - | tar -zx -C usr/
           echo "$(pwd)/usr/bin" >> $GITHUB_PATH
       - name: Setup and run tests
         run: sbt ++${{ matrix.scala }} test
