@@ -27,8 +27,11 @@ libraryDependencies += "com.sifive" %% "chisel-circt" % "X.Y.Z"
 Additionally, install CIRCT.
 You can either:
 
-1. Build and install from [source](https://github.com/llvm/circt)
-2. Use a [nightly docker image](https://github.com/orgs/circt/packages/container/package/images%2Fcirct) and the [`firtool` script](https://github.com/circt/images/blob/trunk/circt/utils/firtool)
+1. Download a release from [`llvm/circt` releases](https://github.com/llvm/circt/releases)
+2. Build and install from [source](https://github.com/llvm/circt)
+
+This project is compatible with (at least) the released version of CIRCT that it was tested with in CI.
+This is documented in the release notes of the latest [tag](https://github.com/sifive/chisel-circt/tags).
 
 After CIRCT installation is complete, you need `firtool` (the tool provided with CIRCT to compile FIRRTL circuits) on your path so `chisel-circt` can use it.
 
