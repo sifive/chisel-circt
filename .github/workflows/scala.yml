@@ -1,4 +1,6 @@
 name: Scala CI
+env:
+  CIRCT_VERSION: sifive/1/19/0
 
 on:
   workflow_dispatch:
@@ -20,7 +22,8 @@ jobs:
       - name: Install CIRCT
         run: |
           mkdir usr
-          wget https://github.com/llvm/circt/releases/download/sifive%2F1%2F19%2F0/circt-bin-ubuntu-20.04.tar.gz -O - | tar -zx -C usr/
+          CIRCT_VERSION_ESCAPED=`echo ${{ env.CIRCT_VERSION }} | sed 's/\//%2F/g'`
+          wget https://github.com/llvm/circt/releases/download/$CIRCT_VERSION_ESCAPED/circt-bin-ubuntu-20.04.tar.gz -O - | tar -zx -C usr/
           echo "$(pwd)/usr/bin" >> $GITHUB_PATH
       - name: Setup and run tests
         run: sbt ++${{ matrix.scala }} test
