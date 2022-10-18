@@ -1,6 +1,6 @@
 name: Scala CI
 env:
-  CIRCT_VERSION: sifive/1/19/0
+  CIRCT_VERSION: sifive/1/20/0
 
 on:
   workflow_dispatch:
