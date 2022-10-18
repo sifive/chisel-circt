@@ -1,4 +1,4 @@
-**This project has been upstreamed to [`chipsalliance/chisel3`](https://github.com/chipsalliance/chisel3) and is no longer developed in this repository.**
+**This project is in the process of being upstreamed to [`chipsalliance/chisel3`](https://github.com/chipsalliance/chisel3).  It was originally upstreamed to `chipsalliance/chisel3`, but has needed to be continually developed here until the Chisel 3.6 release happens.**
 
 # chisel-circt
 
