@@ -22,5 +22,7 @@ lazy val root = (project in file("."))
     name := "chisel-circt",
     libraryDependencies += scalaTest % Test,
     libraryDependencies += chisel3,
-    addCompilerPlugin(chiselCompilerPlugin cross CrossVersion.full)
+    addCompilerPlugin(chiselCompilerPlugin cross CrossVersion.full),
+    resolvers +=
+      "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
   )
