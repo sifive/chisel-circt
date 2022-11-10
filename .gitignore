@@ -9,3 +9,7 @@ project/target/
 out/
 
 test_run_dir/
+.vscode
+.metals
+.bloop
+metals.sbt
