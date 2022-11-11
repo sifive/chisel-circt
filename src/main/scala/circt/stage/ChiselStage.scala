@@ -102,7 +102,7 @@ object ChiselStage {
   def emitSystemVerilog(
     gen:         => RawModule,
     args:        Array[String] = Array.empty,
-    firtoolOpts: Seq[FirtoolOption] = Seq.empty
+    firtoolOpts: Array[String] = Array.empty
   ): String =
     phase
       .transform(
@@ -110,7 +110,7 @@ object ChiselStage {
           ChiselGeneratorAnnotation(() => gen),
           CIRCTTargetAnnotation(CIRCTTarget.SystemVerilog),
           CIRCTHandover(CIRCTHandover.CHIRRTL)
-        ) ++ (new circt.stage.ChiselStage).shell.parse(args) ++ firtoolOpts
+        ) ++ (new circt.stage.ChiselStage).shell.parse(args) ++ firtoolOpts.map(FirtoolOption(_))
       )
       .collectFirst {
         case EmittedVerilogCircuitAnnotation(a) => a
@@ -121,18 +121,18 @@ object ChiselStage {
   /** Compile a Chisel circuit to SystemVerilog with file output
     * @param gen a call-by-name Chisel module
     * @param args additional command line arguments to pass to Chisel
-    * @param firtoolOpts additional [[circt.stage.FirtoolOption]] to pass to firtool
+    * @param firtoolOpts additional command line options to pass to firtool
     * @return a string containing the Verilog output
     */
   def emitSystemVerilogFile(
     gen:         => RawModule,
     args:        Array[String] = Array.empty,
-    firtoolOpts: Seq[FirtoolOption] = Seq.empty
+    firtoolOpts: Array[String] = Array.empty
   ) = {
     val chiselArgs = Array("--target", "systemverilog") ++ args
     (new circt.stage.ChiselStage).execute(
       chiselArgs,
-      Seq(ChiselGeneratorAnnotation(() => gen)) ++ firtoolOpts
+      Seq(ChiselGeneratorAnnotation(() => gen)) ++ firtoolOpts.map(FirtoolOption(_))
     )
   }
 }
