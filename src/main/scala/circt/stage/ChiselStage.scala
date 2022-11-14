@@ -93,21 +93,48 @@ object ChiselStage {
     }
     .get
 
-  /** Compile a Chisel circuit to SystemVerilog */
-  def emitSystemVerilog(gen: => RawModule): String = phase
-    .transform(
-      Seq(
-        ChiselGeneratorAnnotation(() => gen),
-        CIRCTTargetAnnotation(CIRCTTarget.SystemVerilog),
-        CIRCTHandover(CIRCTHandover.CHIRRTL)
+  /** Compile a Chisel circuit to SystemVerilog
+    * @param gen a call-by-name Chisel module
+    * @param args additional command line arguments to pass to Chisel
+    * @param firtoolOpts additional [[circt.stage.FirtoolOption]] to pass to firtool
+    * @return a string containing the Verilog output
+    */
+  def emitSystemVerilog(
+    gen:         => RawModule,
+    args:        Array[String] = Array.empty,
+    firtoolOpts: Array[String] = Array.empty
+  ): String =
+    phase
+      .transform(
+        Seq(
+          ChiselGeneratorAnnotation(() => gen),
+          CIRCTTargetAnnotation(CIRCTTarget.SystemVerilog),
+          CIRCTHandover(CIRCTHandover.CHIRRTL)
+        ) ++ (new circt.stage.ChiselStage).shell.parse(args) ++ firtoolOpts.map(FirtoolOption(_))
       )
-    )
-    .collectFirst {
-      case EmittedVerilogCircuitAnnotation(a) => a
-    }
-    .get
-    .value
+      .collectFirst {
+        case EmittedVerilogCircuitAnnotation(a) => a
+      }
+      .get
+      .value
 
+  /** Compile a Chisel circuit to SystemVerilog with file output
+    * @param gen a call-by-name Chisel module
+    * @param args additional command line arguments to pass to Chisel
+    * @param firtoolOpts additional command line options to pass to firtool
+    * @return a string containing the Verilog output
+    */
+  def emitSystemVerilogFile(
+    gen:         => RawModule,
+    args:        Array[String] = Array.empty,
+    firtoolOpts: Array[String] = Array.empty
+  ) = {
+    val chiselArgs = Array("--target", "systemverilog") ++ args
+    (new circt.stage.ChiselStage).execute(
+      chiselArgs,
+      Seq(ChiselGeneratorAnnotation(() => gen)) ++ firtoolOpts.map(FirtoolOption(_))
+    )
+  }
 }
 
 /** Command line entry point to [[ChiselStage]] */

@@ -68,3 +68,16 @@ println(verilogString)
   * endmodule
   */
 ```
+
+The method `emitSystemVerilog` also accepts parameters for Chisel arguments and Firtool options.
+
+Another option is using `emitSystemVerilogFile` to generate output files.
+Eg. Below the files are created on "./generated" directory (passing Chisel args) and without debug source locators (firtool option).
+
+```scala
+ChiselStage.emitSystemVerilogFile(
+  new Foo,
+  Array("--target-dir", "generated"),
+  Array("--strip-debug-info"),
+)
+```
