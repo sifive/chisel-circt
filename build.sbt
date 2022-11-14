@@ -1,14 +1,14 @@
 import Dependencies._
 
-ThisBuild / scalaVersion         := "2.12.15"
-ThisBuild / crossScalaVersions   := Seq("2.13.6", scalaVersion.value)
-ThisBuild / organization         := "com.sifive"
-ThisBuild / organizationName     := "SiFive"
+ThisBuild / scalaVersion := "2.12.17"
+ThisBuild / crossScalaVersions := Seq("2.13.10", scalaVersion.value)
+ThisBuild / organization := "com.sifive"
+ThisBuild / organizationName := "SiFive"
 ThisBuild / organizationHomepage := Some(url("https://www.sifive.com/"))
-ThisBuild / description          := "Infrastructure to compile Chisel projects using MLIR-based infrastructure (CIRCT)"
-ThisBuild / homepage             := Some(url("https://github.com/sifive/chisel-circt"))
-ThisBuild / licenses             := List("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0"))
-ThisBuild / developers           := List(
+ThisBuild / description := "Infrastructure to compile Chisel projects using MLIR-based infrastructure (CIRCT)"
+ThisBuild / homepage := Some(url("https://github.com/sifive/chisel-circt"))
+ThisBuild / licenses := List("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0"))
+ThisBuild / developers := List(
   Developer(
     "seldridge",
     "Schuyler Eldridge",
@@ -22,7 +22,7 @@ lazy val root = (project in file("."))
     name := "chisel-circt",
     libraryDependencies += scalaTest % Test,
     libraryDependencies += chisel3,
-    addCompilerPlugin(chiselCompilerPlugin cross CrossVersion.full),
+    addCompilerPlugin(chiselCompilerPlugin.cross(CrossVersion.full)),
     resolvers +=
-      "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
+      "Sonatype OSS Snapshots".at("https://oss.sonatype.org/content/repositories/snapshots")
   )
