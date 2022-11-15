@@ -2,8 +2,9 @@
 
 package circt
 
-import circt.stage.{CIRCTOption, CIRCTTargetAnnotation, PreserveAggregate}
+import circt.stage.{CIRCTOption, CIRCTTargetAnnotation, ChiselStage, PreserveAggregate}
 
+import chisel3.RawModule
 import firrtl.AnnotationSeq
 import firrtl.options.OptionsView
 import firrtl.stage.{FirrtlFileAnnotation, FirrtlOption, OutputFileAnnotation}
@@ -33,4 +34,31 @@ package object stage {
 
   }
 
+}
+
+object getSystemVerilogString {
+
+  /**
+    * Returns a string containing the Verilog for the module specified by
+    * the target.
+    * @param gen a call-by-name Chisel module
+    * @param args additional command line arguments to pass to Chisel
+    * @param firtoolOpts additional [[circt.stage.FirtoolOption]] to pass to firtool
+    * @return a string containing the SystemVerilog output
+    */
+  def apply(gen: => RawModule, args: Array[String] = Array.empty, firtoolOpts: Array[String] = Array.empty): String =
+    ChiselStage.emitSystemVerilog(gen, args, firtoolOpts)
+}
+
+object emitSystemVerilog {
+
+  /**
+    * Compile a Chisel circuit to SystemVerilog with file output
+    * @param gen a call-by-name Chisel module
+    * @param args additional command line arguments to pass to Chisel
+    * @param firtoolOpts additional command line options to pass to firtool
+    */
+  def apply(gen: => RawModule, args: Array[String] = Array.empty, firtoolOpts: Array[String] = Array.empty) = {
+    ChiselStage.emitSystemVerilogFile(gen, args, firtoolOpts)
+  }
 }
