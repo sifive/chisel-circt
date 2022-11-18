@@ -38,8 +38,7 @@ package object stage {
 
 object getSystemVerilogString {
 
-  /**
-    * Returns a string containing the Verilog for the module specified by
+  /** Returns a string containing the Verilog for the module specified by
     * the target.
     * @param gen a call-by-name Chisel module
     * @param args additional command line arguments to pass to Chisel
@@ -52,8 +51,7 @@ object getSystemVerilogString {
 
 object emitSystemVerilog {
 
-  /**
-    * Compile a Chisel circuit to SystemVerilog with file output
+  /** Compile a Chisel circuit to SystemVerilog with file output
     * @param gen a call-by-name Chisel module
     * @param args additional command line arguments to pass to Chisel
     * @param firtoolOpts additional command line options to pass to firtool
