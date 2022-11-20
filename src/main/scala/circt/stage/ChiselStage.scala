@@ -31,7 +31,6 @@ class ChiselStage extends Stage {
       targets = Seq(
         Dependency[chisel3.stage.ChiselStage],
         Dependency[firrtl.stage.phases.AddImplicitOutputFile],
-        Dependency[circt.stage.phases.AddDefaults],
         Dependency[circt.stage.phases.Checks],
         Dependency[circt.stage.CIRCTStage]
       ),

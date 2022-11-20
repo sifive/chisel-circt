@@ -13,7 +13,6 @@ import firrtl.stage.OutputFileAnnotation
 class Checks extends Phase {
 
   override def prerequisites = Seq.empty
-  override def optionalPrerequisites = Seq(Dependency[circt.stage.phases.AddDefaults])
   override def optionalPrerequisiteOf = Seq(Dependency[circt.stage.phases.CIRCT])
   override def invalidates(a: Phase) = false
 
