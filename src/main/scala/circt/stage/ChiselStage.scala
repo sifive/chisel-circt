@@ -33,7 +33,6 @@ class ChiselStage extends Stage {
         Dependency[firrtl.stage.phases.AddImplicitOutputFile],
         Dependency[circt.stage.phases.AddDefaults],
         Dependency[circt.stage.phases.Checks],
-        Dependency[circt.stage.phases.MaybeSFC],
         Dependency[circt.stage.CIRCTStage]
       ),
       currentState = Seq(
@@ -70,8 +69,7 @@ object ChiselStage {
     .transform(
       Seq(
         ChiselGeneratorAnnotation(() => gen),
-        CIRCTTargetAnnotation(CIRCTTarget.FIRRTL),
-        CIRCTHandover(CIRCTHandover.CHIRRTL)
+        CIRCTTargetAnnotation(CIRCTTarget.FIRRTL)
       )
     )
     .collectFirst {
@@ -84,8 +82,7 @@ object ChiselStage {
     .transform(
       Seq(
         ChiselGeneratorAnnotation(() => gen),
-        CIRCTTargetAnnotation(CIRCTTarget.HW),
-        CIRCTHandover(CIRCTHandover.CHIRRTL)
+        CIRCTTargetAnnotation(CIRCTTarget.HW)
       )
     )
     .collectFirst {
@@ -108,8 +105,7 @@ object ChiselStage {
       .transform(
         Seq(
           ChiselGeneratorAnnotation(() => gen),
-          CIRCTTargetAnnotation(CIRCTTarget.SystemVerilog),
-          CIRCTHandover(CIRCTHandover.CHIRRTL)
+          CIRCTTargetAnnotation(CIRCTTarget.SystemVerilog)
         ) ++ (new circt.stage.ChiselStage).shell.parse(args) ++ firtoolOpts.map(FirtoolOption(_))
       )
       .collectFirst {
