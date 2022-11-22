@@ -7,6 +7,7 @@ import circt.stage.{CIRCTOption, CIRCTTargetAnnotation, ChiselStage, PreserveAgg
 import chisel3.RawModule
 import firrtl.AnnotationSeq
 import firrtl.options.OptionsView
+import circt.stage.FirtoolOption
 import firrtl.stage.{FirrtlFileAnnotation, FirrtlOption, OutputFileAnnotation}
 
 import java.io.File
@@ -46,7 +47,10 @@ object getSystemVerilogString {
     * @return a string containing the SystemVerilog output
     */
   def apply(gen: => RawModule, args: Array[String] = Array.empty, firtoolOpts: Array[String] = Array.empty): String =
-    ChiselStage.emitSystemVerilog(gen, args, firtoolOpts)
+    ChiselStage.emitSystemVerilog(
+      gen,
+      (new circt.stage.ChiselStage).shell.parse(args) ++ firtoolOpts.map(FirtoolOption(_))
+    )
 }
 
 object emitSystemVerilog {
@@ -57,6 +61,6 @@ object emitSystemVerilog {
     * @param firtoolOpts additional command line options to pass to firtool
     */
   def apply(gen: => RawModule, args: Array[String] = Array.empty, firtoolOpts: Array[String] = Array.empty) = {
-    ChiselStage.emitSystemVerilogFile(gen, args, firtoolOpts)
+    ChiselStage.emitSystemVerilogFile(gen, args, AnnotationSeq(firtoolOpts.map(FirtoolOption(_))))
   }
 }

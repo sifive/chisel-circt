@@ -91,21 +91,19 @@ object ChiselStage {
 
   /** Compile a Chisel circuit to SystemVerilog
     * @param gen a call-by-name Chisel module
-    * @param args additional command line arguments to pass to Chisel
-    * @param firtoolOpts additional [[circt.stage.FirtoolOption]] to pass to firtool
+    * @param annos additional annotations to be passed to transform phase
     * @return a string containing the Verilog output
     */
   def emitSystemVerilog(
-    gen:         => RawModule,
-    args:        Array[String] = Array.empty,
-    firtoolOpts: Array[String] = Array.empty
+    gen:   => RawModule,
+    annos: AnnotationSeq = Seq.empty
   ): String =
     phase
       .transform(
         Seq(
           ChiselGeneratorAnnotation(() => gen),
           CIRCTTargetAnnotation(CIRCTTarget.SystemVerilog)
-        ) ++ (new circt.stage.ChiselStage).shell.parse(args) ++ firtoolOpts.map(FirtoolOption(_))
+        ) ++ annos
       )
       .collectFirst {
         case EmittedVerilogCircuitAnnotation(a) => a
@@ -116,18 +114,16 @@ object ChiselStage {
   /** Compile a Chisel circuit to SystemVerilog with file output
     * @param gen a call-by-name Chisel module
     * @param args additional command line arguments to pass to Chisel
-    * @param firtoolOpts additional command line options to pass to firtool
-    * @return a string containing the Verilog output
+    * @param annos additional annotations to be passed to transform phase
     */
   def emitSystemVerilogFile(
-    gen:         => RawModule,
-    args:        Array[String] = Array.empty,
-    firtoolOpts: Array[String] = Array.empty
+    gen:   => RawModule,
+    args:  Array[String] = Array.empty,
+    annos: AnnotationSeq = Seq.empty
   ) = {
-    val chiselArgs = Array("--target", "systemverilog") ++ args
     (new circt.stage.ChiselStage).execute(
-      chiselArgs,
-      Seq(ChiselGeneratorAnnotation(() => gen)) ++ firtoolOpts.map(FirtoolOption(_))
+      Array("--target", "systemverilog") ++ args,
+      Seq(ChiselGeneratorAnnotation(() => gen)) ++ annos
     )
   }
 }
