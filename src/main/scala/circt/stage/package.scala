@@ -64,3 +64,21 @@ object emitSystemVerilog {
     ChiselStage.emitSystemVerilogFile(gen, args, AnnotationSeq(firtoolOpts.map(FirtoolOption(_))))
   }
 }
+
+object emitSystemVerilogSplit {
+
+  /** Compile a Chisel circuit to SystemVerilog with one file output for each module
+    * @param gen a call-by-name Chisel module
+    * @param args additional command line arguments to pass to Chisel
+    * @param firtoolOpts additional command line options to pass to firtool
+    */
+  def apply(gen: => RawModule, args: Array[String] = Array.empty, firtoolOpts: Array[String] = Array.empty) = {
+    ChiselStage.emitSystemVerilogFile(
+      gen,
+      args,
+      AnnotationSeq(
+        firtoolOpts.map(FirtoolOption(_)) ++ Seq(firrtl.EmitAllModulesAnnotation(classOf[firrtl.SystemVerilogEmitter]))
+      )
+    )
+  }
+}
