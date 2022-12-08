@@ -86,7 +86,7 @@ class CIRCT extends Phase {
     val stageOptions = view[StageOptions](annotations)
 
     var blackbox, inferReadWrite = false
-    var dedup, imcp = true
+    var imcp = true
     var logLevel = _root_.logger.LogLevel.None
     var split = false
 
@@ -115,9 +115,6 @@ class CIRCT extends Phase {
         }
       case firrtl.passes.memlib.InferReadWriteAnnotation =>
         inferReadWrite = true
-        Nil
-      case _: firrtl.transforms.NoDedupAnnotation =>
-        dedup = false
         Nil
       case firrtl.transforms.NoConstantPropagationAnnotation =>
         imcp = false
@@ -148,7 +145,7 @@ class CIRCT extends Phase {
     val binary = "firtool"
 
     val cmd =
-      Seq(binary, "-format=fir", "-warn-on-unprocessed-annotations", "-verify-each=false") ++
+      Seq(binary, "-format=fir", "-warn-on-unprocessed-annotations", "-verify-each=false", "-dedup") ++
         Seq("-output-annotation-file", circtAnnotationFilename) ++
         circtOptions.firtoolOptions ++
         logLevel.toCIRCTOptions ++
@@ -163,7 +160,6 @@ class CIRCT extends Phase {
         (!inferReadWrite).option("-disable-infer-rw") ++
         (!imcp).option("-disable-imcp") ++
         /* The following options are off by default, so we enable them if they are true. */
-        (dedup).option("-dedup") ++
         (blackbox).option("-blackbox-memory") ++
         /* Communicate the annotation file through a file. */
         (chiselAnnotationFilename.map(a => Seq("-annotation-file", a))).getOrElse(Seq.empty) ++
